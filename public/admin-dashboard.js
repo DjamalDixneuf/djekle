@@ -7,6 +7,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const API_URL = '/api';
 
+    function showLoading() {
+        const loadingElement = document.createElement('div');
+        loadingElement.id = 'loading';
+        loadingElement.textContent = 'Chargement...';
+        loadingElement.style.position = 'fixed';
+        loadingElement.style.top = '50%';
+        loadingElement.style.left = '50%';
+        loadingElement.style.transform = 'translate(-50%, -50%)';
+        loadingElement.style.padding = '10px';
+        loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        loadingElement.style.color = 'white';
+        loadingElement.style.borderRadius = '5px';
+        loadingElement.style.zIndex = '1000';
+        document.body.appendChild(loadingElement);
+    }
+
+    function hideLoading() {
+        const loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    }
+
     function displayMovies(moviesToShow) {
         console.log('Affichage des films:', moviesToShow);
         movieTableBody.innerHTML = '';
@@ -90,26 +113,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadMovies() {
-    showLoading();
-    fetch(`${API_URL}/movies`)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        movies = Array.isArray(data) ? data : [];
-        displayMovies(movies);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('Erreur lors du chargement des films. Veuillez réessayer plus tard.');
-    })
-    .finally(() => {
-        hideLoading();
-    });
-}
+        showLoading();
+        fetch(`${API_URL}/movies`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            movies = Array.isArray(data) ? data : [];
+            displayMovies(movies);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Erreur lors du chargement des films. Veuillez réessayer plus tard.');
+        })
+        .finally(() => {
+            hideLoading();
+        });
+    }
 
     addMovieForm.addEventListener('submit', addMovie);
     searchBar.addEventListener('input', filterMovies);
