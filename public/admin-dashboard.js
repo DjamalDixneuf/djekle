@@ -1,37 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addMovieForm = document.getElementById('addMovieForm');
     const movieTableBody = document.getElementById('movieTableBody');
+    const requestTableBody = document.getElementById('requestTableBody');
     const searchBar = document.getElementById('searchBar');
 
     let movies = [];
-    
+    let requests = [];
     const API_URL = '/api';
 
-    function showLoading() {
-        const loadingElement = document.createElement('div');
-        loadingElement.id = 'loading';
-        loadingElement.textContent = 'Chargement...';
-        loadingElement.style.position = 'fixed';
-        loadingElement.style.top = '50%';
-        loadingElement.style.left = '50%';
-        loadingElement.style.transform = 'translate(-50%, -50%)';
-        loadingElement.style.padding = '10px';
-        loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        loadingElement.style.color = 'white';
-        loadingElement.style.borderRadius = '5px';
-        loadingElement.style.zIndex = '1000';
-        document.body.appendChild(loadingElement);
-    }
-
-    function hideLoading() {
-        const loadingElement = document.getElementById('loading');
-        if (loadingElement) {
-            loadingElement.remove();
-        }
-    }
-
     function displayMovies(moviesToShow) {
-        console.log('Affichage des films:', moviesToShow);
         movieTableBody.innerHTML = '';
         moviesToShow.forEach(movie => {
             const row = document.createElement('tr');
@@ -46,10 +23,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function displayRequests() {
+        requestTableBody.innerHTML = '';
+        requests.forEach(request => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${request.title}</td>
+                <td><a href="${request.imdbLink}" target="_blank">${request.imdbLink}</a></td>
+                <td>${request.comment || 'Aucun commentaire'}</td>
+                <td>
+                    <button onclick="approveRequest(${request.id})">Approuver</button>
+                    <button onclick="rejectRequest(${request.id})">Rejeter</button>
+                </td>
+            `;
+            requestTableBody.appendChild(row);
+        });
+    }
+
     function addMovie(event) {
         event.preventDefault();
-        console.log('Tentative d\'ajout de film');
-        showLoading();
         const form = event.target;
         const movieData = {
             title: form.title.value.trim(),
@@ -60,8 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             thumbnailUrl: form.thumbnailUrl.value.trim(),
             videoUrl: form.videoUrl.value.trim()
         };
-        console.log('Données du film:', movieData);
-    
+
         fetch(`${API_URL}/movies`, {
             method: 'POST',
             headers: {
@@ -69,24 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify(movieData),
         })
-        .then(response => {
-            console.log('Statut de la réponse:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('Succès:', data);
+            console.log('Success:', data);
             loadMovies();
             form.reset();
         })
         .catch((error) => {
-            console.error('Erreur:', error);
-            alert('Erreur lors de l\'ajout du film. Veuillez réessayer.');
-        })
-        .finally(() => {
-            hideLoading();
+            console.error('Error:', error);
         });
     }
 
@@ -104,6 +85,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    window.approveRequest = function(id) {
+        // Ici, vous pouvez implémenter la logique pour approuver une demande
+        console.log('Approuver la demande:', id);
+        // Après approbation, vous pouvez retirer la demande de la liste
+        requests = requests.filter(request => request.id !== id);
+        displayRequests();
+    }
+
+    window.rejectRequest = function(id) {
+        // Ici, vous pouvez implémenter la logique pour rejeter une demande
+        console.log('Rejeter la demande:', id);
+        // Après rejet, vous pouvez retirer la demande de la liste
+        requests = requests.filter(request => request.id !== id);
+        displayRequests();
+    }
+
     function filterMovies() {
         const searchTerm = searchBar.value.toLowerCase();
         const filteredMovies = movies.filter(movie => 
@@ -113,40 +110,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadMovies() {
-        showLoading();
         fetch(`${API_URL}/movies`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            movies = Array.isArray(data) ? data : [];
+            movies = data.data;
             displayMovies(movies);
         })
         .catch((error) => {
             console.error('Error:', error);
-            alert('Erreur lors du chargement des films. Veuillez réessayer plus tard.');
-        })
-        .finally(() => {
-            hideLoading();
         });
+    }
+
+    function loadRequests() {
+        // Récupérer les demandes depuis le stockage local
+        const storedRequests = JSON.parse(localStorage.getItem('movieRequests')) || [];
+        requests = storedRequests.map((request, index) => ({
+            id: index + 1,
+            ...request
+        }));
+        displayRequests();
     }
 
     addMovieForm.addEventListener('submit', addMovie);
     searchBar.addEventListener('input', filterMovies);
 
     loadMovies();
-});
-// Gestion de la déconnexion
-const logoutButton = document.getElementById('logoutButton');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function() {
-        // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
-        // Par exemple, supprimer les tokens d'authentification du localStorage
+    loadRequests();
 
-        // Redirection vers la page de connexion
-        window.location.href = 'index.html';
-    });
-}
+    // Gestion de la déconnexion
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
+            // Par exemple, supprimer les tokens d'authentification du localStorage
+
+            // Redirection vers la page de connexion
+            window.location.href = 'index.html';
+        });
+    }
+});
