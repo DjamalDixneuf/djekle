@@ -24,48 +24,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addMovie(event) {
-    event.preventDefault();
-    console.log('Tentative d\'ajout de film');
-    showLoading();
-    const form = event.target;
-    const movieData = {
-        title: form.title.value.trim(),
-        duration: form.duration.value.trim(),
-        description: form.description.value.trim(),
-        genre: form.genre.value.trim(),
-        releaseYear: form.releaseYear.value,
-        thumbnailUrl: form.thumbnailUrl.value.trim(),
-        videoUrl: form.videoUrl.value.trim()
-    };
-    console.log('Données du film:', movieData);
+        event.preventDefault();
+        console.log('Tentative d\'ajout de film');
+        showLoading();
+        const form = event.target;
+        const movieData = {
+            title: form.title.value.trim(),
+            duration: form.duration.value.trim(),
+            description: form.description.value.trim(),
+            genre: form.genre.value.trim(),
+            releaseYear: form.releaseYear.value,
+            thumbnailUrl: form.thumbnailUrl.value.trim(),
+            videoUrl: form.videoUrl.value.trim()
+        };
+        console.log('Données du film:', movieData);
+    
+        fetch(`${API_URL}/movies`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(movieData),
+        })
+        .then(response => {
+            console.log('Statut de la réponse:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Succès:', data);
+            loadMovies();
+            form.reset();
+        })
+        .catch((error) => {
+            console.error('Erreur:', error);
+            alert('Erreur lors de l\'ajout du film. Veuillez réessayer.');
+        })
+        .finally(() => {
+            hideLoading();
+        });
+    }
 
-    fetch(`${API_URL}/movies`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(movieData),
-    })
-    .then(response => {
-        console.log('Statut de la réponse:', response.status);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Succès:', data);
-        loadMovies();
-        form.reset();
-    })
-    .catch((error) => {
-        console.error('Erreur:', error);
-        alert('Erreur lors de l\'ajout du film. Veuillez réessayer.');
-    })
-    .finally(() => {
-        hideLoading();
-    });
-}
     window.deleteMovie = function(id) {
         fetch(`${API_URL}/movies/${id}`, {
             method: 'DELETE',
@@ -116,13 +117,13 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMovies();
 });
 // Gestion de la déconnexion
-    const logoutButton = document.getElementById('logoutButton');
-    if (logoutButton) {
-        logoutButton.addEventListener('click', function() {
-            // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
-            // Par exemple, supprimer les tokens d'authentification du localStorage
+const logoutButton = document.getElementById('logoutButton');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function() {
+        // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
+        // Par exemple, supprimer les tokens d'authentification du localStorage
 
-            // Redirection vers la page de connexion
-            window.location.href = 'index.html';
-        });
-    }
+        // Redirection vers la page de connexion
+        window.location.href = 'index.html';
+    });
+}
