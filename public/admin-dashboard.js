@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function addMovie(event) {
     event.preventDefault();
+    console.log('Tentative d\'ajout de film');
     showLoading();
     const form = event.target;
     const movieData = {
@@ -36,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         thumbnailUrl: form.thumbnailUrl.value.trim(),
         videoUrl: form.videoUrl.value.trim()
     };
+    console.log('Données du film:', movieData);
 
     fetch(`${API_URL}/movies`, {
         method: 'POST',
@@ -45,25 +47,25 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify(movieData),
     })
     .then(response => {
+        console.log('Statut de la réponse:', response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log('Success:', data);
+        console.log('Succès:', data);
         loadMovies();
         form.reset();
     })
     .catch((error) => {
-        console.error('Error:', error);
+        console.error('Erreur:', error);
         alert('Erreur lors de l\'ajout du film. Veuillez réessayer.');
     })
     .finally(() => {
         hideLoading();
     });
 }
-
     window.deleteMovie = function(id) {
         fetch(`${API_URL}/movies/${id}`, {
             method: 'DELETE',
