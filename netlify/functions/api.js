@@ -1,12 +1,29 @@
-const jsonServer = require('json-server')
-const serverless = require('serverless-http')
-const server = jsonServer.create()
-const router = jsonServer.router('db.json')
-const middlewares = jsonServer.defaults()
 const express = require('express');
+const serverless = require('serverless-http');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 
-server.use(middlewares)
-server.use(router)
+app.use(cors());
+app.use(bodyParser.json());
 
-module.exports.handler = serverless(server)
+let movies = [];
+
+app.get('/api/movies', (req, res) => {
+  res.json(movies);
+});
+
+app.post('/api/movies', (req, res) => {
+  const newMovie = req.body;
+  newMovie.id = Date.now(); // Génère un ID unique
+  movies.push(newMovie);
+  res.status(201).json(newMovie);
+});
+
+app.delete('/api/movies/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  movies = movies.filter(movie => movie.id !== id);
+  res.status(204).send();
+});
+
+module.exports.handler = serverless(app);
