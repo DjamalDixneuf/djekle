@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demander un film/série - Jekle Entertainment</title>
+    <link rel="stylesheet" href="stylesA.css">
+    <style>
+        body {
+            background-color: #1a1a2e;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #16213e;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #4ecca3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+            color: #4ecca3;
+        }
+        input, textarea {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1f2833;
+            color: #ffffff;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #4ecca3;
+        }
+        button {
+            padding: 12px;
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45b293;
+        }
+        #requestsList, #moviesList {
+            margin-top: 30px;
+            background-color: #1f2833;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .request-item, .movie-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #4ecca3;
+        }
+        .return-button {
+            position: absolute;
+         width: 10%;
+         position: absolute; /* Permet de positionner librement */
+         top: 50px; /* Ajuste la position verticale */
+          right: 1120px; /* Ajuste la position horizontale */
+         padding: 10px 20px;
+         border: none;
+        border-radius: 4px;
+          cursor: pointer;
+ }</style>
+</head>
+<body>
+    <button class="return-button" onclick="window.location.href='user page.html'">Retour</button>
+    <div class="container">
+    <div class="container">
+        <h1>Demander un film/série</h1>
+        <form id="requestForm">
+            <label for="title">Titre du film/série</label>
+            <input type="text" id="title" required>
+            
+            <label for="imdbLink">Lien IMDB</label>
+            <input type="url" id="imdbLink" required>
+            
+            <label for="comment">Commentaire (optionnel)</label>
+            <textarea id="comment" rows="4"></textarea>
+            
+            <button type="submit">Envoyer la demande</button>
+        </form>
+
+        <div id="requestsList">
+            <h2>Demandes en cours</h2>
+            <!-- Les demandes seront ajoutées ici dynamiquement -->
+        </div>
+
+        <div id="moviesList">
+            <h2>Films disponibles</h2>
+            <!-- Les films seront ajoutés ici dynamiquement -->
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const requestForm = document.getElementById('requestForm');
+        const requestsList = document.getElementById('requestsList');
+        const moviesList = document.getElementById('moviesList');
+        let movies = [];
+
+        function displayMovies(moviesToShow) {
+            moviesList.innerHTML = '<h2>Films disponibles</h2>';
+            moviesToShow.forEach(movie => {
+                const movieItem = document.createElement('div');
+                movieItem.className = 'movie-item';
+                movieItem.innerHTML = `
+                    <h3>${movie.title}</h3>
+                    <p>Genre: ${movie.genre}</p>
+                    <p>Durée: ${movie.duration}</p>
+                    <p>Année de sortie: ${movie.releaseYear}</p>
+                `;
+                moviesList.appendChild(movieItem);
+            });
+        }
+
+        function loadMovies() {
+            fetch('http://localhost:3000/movies')
+                .then(response => response.json())
+                .then(data => {
+                    movies = data.data;
+                    displayMovies(movies);
+                })
+                .catch((error) => {
+                    console.error('Erreur lors du chargement des films:', error);
+                });
+        }
+
+        function saveRequest(request) {
+            let requests = JSON.parse(localStorage.getItem('movieRequests')) || [];
+            requests.push(request);
+            localStorage.setItem('movieRequests', JSON.stringify(requests));
+        }
+
+        requestForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value;
+            const imdbLink = document.getElementById('imdbLink').value;
+            const comment = document.getElementById('comment').value;
+
+            const request = { title, imdbLink, comment };
+            saveRequest(request);
+
+            // Créer un nouvel élément pour la demande
+            const requestItem = document.createElement('div');
+            requestItem.className = 'request-item';
+            requestItem.innerHTML = `
+                <h3>${title}</h3>
+                <p>IMDB: <a href="${imdbLink}" target="_blank">${imdbLink}</a></p>
+                ${comment ? `<p>Commentaire: ${comment}</p>` : ''}
+            `;
+
+            // Ajouter la nouvelle demande à la liste
+            requestsList.appendChild(requestItem);
+
+            // Réinitialiser le formulaire
+            requestForm.reset();
+        });
+
+        // Charger les films au chargement de la page
+        loadMovies();
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord Administrateur</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+    <div class="dashboard">
+        <button class="iconL-button" id="logoutButton">
+            <img src="logout.svg" alt="Logout" class="icon-svg">
+        </button>
+        <h1>Tableau de Bord Administrateur</h1>
+        
+        <!-- Formulaire pour ajouter un nouveau film -->
+        <div class="card">
+            <h2>Ajouter un Nouveau Film</h2>
+            <form id="addMovieForm">
+                <label for="title">Titre</label>
+                <input type="text" id="title" required>
+
+                <label for="duration">Durée</label>
+                <input type="text" id="duration" required>
+
+                <label for="description">Description</label>
+                <textarea id="description" required></textarea>
+
+                <label for="genre">Genre</label>
+                <input type="text" id="genre" required>
+
+                <label for="releaseYear">Année de Sortie</label>
+                <input type="number" id="releaseYear" value="2023" required>
+
+                <label for="thumbnailUrl">URL de la Miniature</label>
+                <input type="url" id="thumbnailUrl" required>
+
+                <label for="videoUrl">URL de la Vidéo</label>
+                <input type="url" id="videoUrl" required>
+
+                <button type="submit">Ajouter le Film</button>
+            </form>
+        </div>
+
+        <!-- Liste de films avec barre de recherche -->
+        <div class="card">
+            <h2>Liste des Films</h2>
+            <input type="text" id="searchBar" placeholder="Rechercher des films...">
+            <table id="movieTable">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Genre</th>
+                        <th>Durée</th>
+                        <th>Année de Sortie</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="movieTableBody">
+                    <!-- Les films seront affichés ici dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Nouvelle section pour les demandes de films -->
+        <div class="card">
+            <h2>Demandes de Films</h2>
+            <table id="requestTable">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Lien IMDB</th>
+                        <th>Commentaire</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requestTableBody">
+                    <!-- Les demandes seront affichées ici dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page de Connexion - Jekle</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <div class="icon-container">
+          <img src="film.svg" alt="Film Icon" class="icon-svg">
+        </div>
+        <h2 class="title">Jekle</h2>
+        <p class="description">Votre plateforme de streaming préférée</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="showTab('login')">Se connecter</button>
+        <button class="tab-button" onclick="showTab('signup')">Créer un compte</button>
+      </div>
+
+      <div id="login" class="tab-content active">
+        <form class="form" onsubmit="handleLogin(event)">
+          <label for="username-login">Nom d'utilisateur</label>
+          <div class="input-group">
+            <span class="icon">&#128100;</span>
+            <input type="text" id="username-login" placeholder="Entrez votre nom d'utilisateur" required>
+          </div>
+
+          <label for="password-login">Mot de passe</label>
+          <div class="input-group">
+            <span class="icon">&#128274;</span>
+            <input type="password" id="password-login" placeholder="Entrez votre mot de passe" required>
+          </div>
+
+          <button type="submit" class="button">Se connecter</button>
+        </form>
+      </div>
+
+      <div id="signup" class="tab-content">
+        <form class="form" onsubmit="handleSignup(event)">
+          <label for="username-signup">Nom d'utilisateur</label>
+          <div class="input-group">
+            <span class="icon">&#128100;</span>
+            <input type="text" id="username-signup" placeholder="Choisissez un nom d'utilisateur" required>
+          </div>
+
+          <label for="password-signup">Mot de passe</label>
+          <div class="input-group">
+            <span class="icon">&#128274;</span>
+            <input type="password" id="password-signup" placeholder="Choisissez un mot de passe" required>
+          </div>
+
+          <label for="subscription">Durée d'abonnement</label>
+          <select id="subscription" required>
+            <option value="" disabled selected>Sélectionnez une durée</option>
+            <option value="1 mois">1 mois - 4,000 Ar </option>
+            <option value="3 mois">3 mois - 15,000 Ar </option>
+          </select>
+
+          <label for="payment">Numéro Orange Money</label>
+          <input type="tel" id="payment" placeholder="Ex: 032 XX XXX XX" required>
+
+          <button type="submit" class="button">Créer un compte</button>
+        </form>
+      </div>
+    </div>
+  </div>
+    <script src="index.js"></script>
+</body>
+</html>

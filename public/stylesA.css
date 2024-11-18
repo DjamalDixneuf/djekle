@@ -1,0 +1,188 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1f2937; /* Gray-900 */
+    color: white;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+header {
+    background-color: #2d3748; /* Gray-800 */
+    padding: 16px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.input {
+    padding: 8px;
+    width: 250px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #2d3748;
+    color: white;
+}
+
+.grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.card {
+    background-color: #2d3748;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card img {
+    width: 180px;  /* Width of the image */
+    height: 260px; /* Height of the image */
+    object-fit: cover; /* Ensures the image covers the space without distortion */
+    margin-bottom: 12px;
+}
+
+.card-content {
+    text-align: center;
+}
+
+.card h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #ffffff; /* Ensures the title is visible */
+}
+
+.card p {
+    color: #d1d5db; /* Gray-400 */
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+button {
+    width: 100%;
+    padding: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 12px;
+    font-size: 14px;
+}
+.iconL-button {
+    position: absolute;
+    width: 10%;
+    position: absolute; /* Permet de positionner librement */
+    top: 60px; /* Ajuste la position verticale */
+    right: 10px; /* Ajuste la position horizontale */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #4c98af;
+    color: white;
+}
+
+.iconU-button {
+    position: absolute;
+    width: 10%;
+    position: absolute; /* Permet de positionner librement */
+    top: 10px; /* Ajuste la position verticale */
+    right: 10px; /* Ajuste la position horizontale */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #4c98af;
+    color: white;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #a0aec0;
+}
+
+.icon-svg {
+    width: 20px; /* Taille réduite de l'icône */
+    height: 20px;
+}
+.iconf-svg {
+    width: 60px; /* Taille réduite de l'icône */
+    height: 50px;
+}
+/* Optional: Add a smooth transition effect for the cards when hovered */
+.card:hover {
+    transform: translateY(-10px);
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+    background-color: #2d3748;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#videoPlayer {
+    width: 100%;
+    height: 450px;
+    margin-bottom: 20px;
+}
+
+#movieDetails {
+    color: #fff;
+}
