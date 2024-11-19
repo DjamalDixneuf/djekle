@@ -6,39 +6,38 @@
     <title>Jekle - Films Disponibles</title>
     <link rel="stylesheet" href="stylesA.css">
 </head>
-<body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="film.svg" alt="Film Icon" class="logo-icon">
-                    <h1>Jekle Entertainment</h1>
-                </div>
-                <div class="search-bar">
-                    <input type="search" id="searchInput" placeholder="Rechercher un film...">
-                    <button class="icon-button" id="userButton">
-                        <img src="user.svg" alt="User" class="icon-svg">
-                    </button>
-                    <button class="icon-button" id="logoutButton">
-                        <img src="logout.svg" alt="Logout" class="icon-svg">
-                    </button>
-                </div>
+<body class="bg-gray-900 text-white">
+    <header class="bg-gray-800 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img src="film.svg" alt="Film Icon" class="iconf-svg">
+                <h1 class="text-2xl font-bold">Jekle Entertainment</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <input type="search" id="searchInput" placeholder="Rechercher un film..." class="w-64 input">
+                <button class="iconU-button" id="userButton">
+                    <img src="user.svg" alt="User" class="icon-svg">
+                </button>
+                <button class="iconL-button" id="logoutButton">
+                    <img src="logout.svg" alt="Logout" class="icon-svg">
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <h2>Films disponibles</h2>
-        <div id="moviesContainer" class="movies-grid">
+    <main class="container mx-auto py-8">
+        <h2 class="text-2xl font-semibold mb-4">Films disponibles</h2>
+        <div id="moviesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Les films seront ajoutés ici dynamiquement avec JavaScript -->
         </div>
     </main>
-
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <iframe 
                 id="videoPlayer" 
+                width="100%" 
+                height="315" 
                 src="" 
                 frameborder="0" 
                 allowfullscreen
