@@ -4,23 +4,24 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
 
 // In-memory storage
 let movies = [];
 
-app.get('/', (req, res) => {
+app.get('/.netlify/functions/api', (req, res) => {
   res.json({ message: "API is working" });
 });
 
-app.get('/movies', (req, res) => {
+app.get('/.netlify/functions/api/movies', (req, res) => {
   console.log('GET /movies appelé');
   console.log('Films récupérés:', movies);
   res.json(movies);
 });
 
-app.post('/movies', (req, res) => {
+app.post('/.netlify/functions/api/movies', (req, res) => {
   console.log('POST /movies appelé');
   const newMovie = req.body;
   newMovie.id = Date.now();
@@ -29,7 +30,7 @@ app.post('/movies', (req, res) => {
   res.status(201).json(newMovie);
 });
 
-app.delete('/movies/:id', (req, res) => {
+app.delete('/.netlify/functions/api/movies/:id', (req, res) => {
   console.log('DELETE /movies/:id appelé');
   const id = parseInt(req.params.id);
   movies = movies.filter(movie => movie.id !== id);
@@ -38,6 +39,7 @@ app.delete('/movies/:id', (req, res) => {
 });
 
 app.use((req, res) => {
+  console.log('Route non trouvée:', req.method, req.url);
   res.status(404).json({ error: "Not Found" });
 });
 
