@@ -8,18 +8,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let movies = [];
     
-    const API_URL = '/api';
+    const API_URL = '/.netlify/functions/api';
+
+    function showLoading() {
+        const loadingElement = document.createElement('div');
+        loadingElement.id = 'loading';
+        loadingElement.textContent = 'Chargement...';
+        loadingElement.style.position = 'fixed';
+        loadingElement.style.top = '50%';
+        loadingElement.style.left = '50%';
+        loadingElement.style.transform = 'translate(-50%, -50%)';
+        loadingElement.style.padding = '10px';
+        loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+        loadingElement.style.color = 'white';
+        loadingElement.style.borderRadius = '5px';
+        loadingElement.style.zIndex = '1000';
+        document.body.appendChild(loadingElement);
+    }
+
+    function hideLoading() {
+        const loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+            loadingElement.remove();
+        }
+    }
     
     function loadMovies() {
+        console.log('Chargement des films...');
         showLoading();
-        fetch('/api/movies')
+        fetch(`${API_URL}/movies`)
         .then(response => {
+            console.log('Réponse reçue:', response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
+            console.log('Films reçus:', data);
             movies = Array.isArray(data) ? data : [];
             displayMovies(movies);
         })
@@ -33,16 +59,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getEmbedUrl(url) {
-        // Gestion des URLs Google Drive
         const driveMatch = url.match(/(?:https?:\/\/)?(?:www\.)?drive\.google\.com\/file\/d\/([^/]+)/);
         if (driveMatch) {
             const fileId = driveMatch[1];
-            // Utiliser l'URL de prévisualisation directe
             return `https://drive.google.com/file/d/${fileId}/preview`;
         }
-        
         return url;
     }
+
     function displayMovies(moviesToShow) {
         moviesContainer.innerHTML = '';
         if (moviesToShow.length === 0) {
