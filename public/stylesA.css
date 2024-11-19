@@ -10,7 +10,8 @@ body {
 }
 
 header {
-    background-color: #2d3748; /* Gray-800 */
+    background-color: #12141c; /* Gray-800 */
+    border: 1px solid #1a1d28; 
     padding: 16px;
 }
 
