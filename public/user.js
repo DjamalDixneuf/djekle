@@ -128,3 +128,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadMovies();
 });
+// Gestion de la déconnexion
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
+            // Par exemple, supprimer les tokens d'authentification du localStorage
+
+            // Redirection vers la page de connexion
+            window.location.href = 'index.html';
+        });
+    }
