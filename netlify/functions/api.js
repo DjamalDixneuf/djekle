@@ -10,14 +10,18 @@ app.use(bodyParser.json());
 // In-memory storage
 let movies = [];
 
-app.get('/api/movies', (req, res) => {
-  console.log('GET /api/movies appelé');
+app.get('/', (req, res) => {
+  res.json({ message: "API is working" });
+});
+
+app.get('/movies', (req, res) => {
+  console.log('GET /movies appelé');
   console.log('Films récupérés:', movies);
   res.json(movies);
 });
 
-app.post('/api/movies', (req, res) => {
-  console.log('POST /api/movies appelé');
+app.post('/movies', (req, res) => {
+  console.log('POST /movies appelé');
   const newMovie = req.body;
   newMovie.id = Date.now();
   movies.push(newMovie);
@@ -25,12 +29,16 @@ app.post('/api/movies', (req, res) => {
   res.status(201).json(newMovie);
 });
 
-app.delete('/api/movies/:id', (req, res) => {
-  console.log('DELETE /api/movies/:id appelé');
+app.delete('/movies/:id', (req, res) => {
+  console.log('DELETE /movies/:id appelé');
   const id = parseInt(req.params.id);
   movies = movies.filter(movie => movie.id !== id);
   console.log('Film supprimé, id:', id);
   res.status(204).send();
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not Found" });
 });
 
 module.exports.handler = serverless(app);
