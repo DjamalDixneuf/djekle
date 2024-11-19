@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jekle - Films Disponibles</title>
-    <link rel="stylesheet" href="stylesA.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="film.svg" alt="Film Icon">
+                    <img src="film.svg" alt="Film Icon" class="logo-icon">
                     <h1>Jekle Entertainment</h1>
                 </div>
                 <div class="search-bar">
-                    <input type="search" id="searchInput" placeholder="Rechercher...">
+                    <input type="search" id="searchInput" placeholder="Rechercher un film...">
                     <button class="icon-button" id="userButton">
-                        <img src="user.svg" alt="User">
+                        <img src="user.svg" alt="User" class="icon-svg">
                     </button>
                     <button class="icon-button" id="logoutButton">
-                        <img src="logout.svg" alt="Logout">
+                        <img src="logout.svg" alt="Logout" class="icon-svg">
                     </button>
                 </div>
             </div>
@@ -29,12 +29,12 @@
 
     <main class="container">
         <h2>Films disponibles</h2>
-        <div id="moviesContainer">
+        <div id="moviesContainer" class="movies-grid">
             <!-- Les films seront ajoutés ici dynamiquement avec JavaScript -->
         </div>
     </main>
 
-    <div id="videoModal">
+    <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <iframe 
