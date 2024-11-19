@@ -10,6 +10,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "json-server": "^0.17.3",
-    "serverless-http": "^3.1.1"
+    "serverless-http": "^3.1.1",
+    "@netlify/blobs": "^6.0.0"
   }
 }
