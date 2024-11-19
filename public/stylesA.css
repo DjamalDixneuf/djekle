@@ -1,16 +1,17 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #1f2937; /* Gray-900 */
+    background-color: #1f2937;
     color: white;
 }
 
 .container {
-    width: 90%;
+    width: 95%;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
 header {
-    background-color: #2d3748; /* Gray-800 */
+    background-color: #2d3748;
     padding: 16px;
 }
 
@@ -19,16 +20,10 @@ h1 {
     font-weight: bold;
 }
 
-.icon-button {
-    background: none;
-    border: none;
-    padding: 8px;
-    cursor: pointer;
-}
-
 .input {
     padding: 8px;
-    width: 250px;
+    width: 100%;
+    max-width: 250px;
     border-radius: 4px;
     border: 1px solid #ccc;
     background-color: #2d3748;
@@ -37,15 +32,15 @@ h1 {
 
 .grid {
     display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 }
 
 .card {
     background-color: #2d3748;
     border-radius: 8px;
     overflow: hidden;
-    width: 60%;
+    width: 100%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -54,14 +49,11 @@ h1 {
     transition: transform 0.3s;
 }
 
-.card:hover {
-    transform: scale(1.05);
-}
-
 .card img {
-    width: 180px;  /* Width of the image */
-    height: 260px; /* Height of the image */
-    object-fit: cover; /* Ensures the image covers the space without distortion */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
     margin-bottom: 12px;
 }
 
@@ -70,21 +62,21 @@ h1 {
 }
 
 .card h3 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #ffffff; /* Ensures the title is visible */
+    color: #ffffff;
 }
 
 .card p {
-    color: #d1d5db; /* Gray-400 */
+    color: #d1d5db;
     font-size: 14px;
     margin-bottom: 12px;
 }
 
 button {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: #4CAF50;
     color: white;
     border: none;
@@ -93,54 +85,46 @@ button {
     margin-top: 12px;
     font-size: 14px;
 }
-.iconL-button {
-    position: absolute;
-    width: 10%;
-    position: absolute; /* Permet de positionner librement */
-    top: 60px; /* Ajuste la position verticale */
-    right: 10px; /* Ajuste la position horizontale */
-    padding: 10px 20px;
+
+.iconL-button, .iconU-button {
+    background-color: #4c98af;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background-color: #4c98af;
-    color: white;
-}
-
-.iconU-button {
-    position: absolute;
-    width: 10%;
-    position: absolute; /* Permet de positionner librement */
-    top: 10px; /* Ajuste la position verticale */
-    right: 10px; /* Ajuste la position horizontale */
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #4c98af;
-    color: white;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-button:disabled {
-    background-color: #a0aec0;
+    padding: 8px;
 }
 
 .icon-svg {
-    width: 20px; /* Taille réduite de l'icône */
+    width: 20px;
     height: 20px;
 }
+
 .iconf-svg {
-    width: 60px; /* Taille réduite de l'icône */
-    height: 50px;
+    width: 40px;
+    height: 40px;
 }
-/* Optional: Add a smooth transition effect for the cards when hovered */
-.card:hover {
-    transform: translateY(-10px);
+
+/* Media queries pour la responsivité */
+@media (min-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
 }
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Styles pour la modal (inchangés) */
 .modal {
     display: none;
     position: fixed;
@@ -158,7 +142,7 @@ button:disabled {
     margin: 10% auto;
     padding: 20px;
     border-radius: 8px;
-    width: 80%;
+    width: 90%;
     max-width: 800px;
 }
 
@@ -179,7 +163,8 @@ button:disabled {
 
 #videoPlayer {
     width: 100%;
-    height: 450px;
+    height: 56.25vw;
+    max-height: 450px;
     margin-bottom: 20px;
 }
 
