@@ -1,6 +1,6 @@
 [build]
   publish = "public"
-  command = "# no build command"
+  functions = "netlify/functions"
 
 [[redirects]]
   from = "/api/*"
@@ -12,5 +12,5 @@
   to = "/index.html"
   status = 200
 
-[functions]
-  directory = "netlify/functions"
+[build.environment]
+  DEBUG = "*"
