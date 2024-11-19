@@ -2,14 +2,11 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const app = express();
 
+const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use((req, res, next) => {
-  console.log(`Requête reçue: ${req.method} ${req.path}`);
-  next();
-});
+
 let movies = [];
 
 app.get('/api/movies', (req, res) => {
