@@ -47,51 +47,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function addMovie(event) {
-        event.preventDefault();
-        console.log('Tentative d\'ajout de film');
-        showLoading();
-        const form = event.target;
-        const movieData = {
-            title: form.title.value.trim(),
-            duration: form.duration.value.trim(),
-            description: form.description.value.trim(),
-            genre: form.genre.value.trim(),
-            releaseYear: form.releaseYear.value,
-            thumbnailUrl: form.thumbnailUrl.value.trim(),
-            videoUrl: form.videoUrl.value.trim()
-        };
-        console.log('Données du film:', movieData);
+    event.preventDefault();
+    console.log('Tentative d\'ajout de film');
+    showLoading();
+    const form = event.target;
+    const movieData = {
+        title: form.title.value.trim(),
+        duration: form.duration.value.trim(),
+        description: form.description.value.trim(),
+        genre: form.genre.value.trim(),
+        releaseYear: form.releaseYear.value,
+        thumbnailUrl: form.thumbnailUrl.value.trim(),
+        videoUrl: form.videoUrl.value.trim()
+    };
+    console.log('Données du film:', movieData);
 
-        fetch(`${API_URL}/movies`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(movieData),
-        })
-        .then(response => {
-            console.log('Statut de la réponse:', response.status);
-            console.log('Headers de la réponse:', response.headers);
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Succès:', data);
-            loadMovies();
-            form.reset();
-        })
-        .catch((error) => {
-            console.error('Erreur détaillée:', error);
-            alert(`Erreur lors de l'ajout du film: ${error.message}`);
-        })
-        .finally(() => {
-            hideLoading();
-        });
-    }
+    fetch(`${API_URL}/movies`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(movieData),
+    })
+    .then(response => {
+        console.log('Statut de la réponse:', response.status);
+        console.log('Headers de la réponse:', response.headers);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Succès:', data);
+        loadMovies();
+        form.reset();
+    })
+    .catch((error) => {
+        console.error('Erreur détaillée:', error);
+        alert(`Erreur lors de l'ajout du film: ${error.message}`);
+    })
+    .finally(() => {
+        hideLoading();
+    });
+}
 
     window.deleteMovie = function(id) {
         showLoading();
