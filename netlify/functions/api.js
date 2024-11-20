@@ -2,60 +2,52 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const { getStore } = require('@netlify/blobs');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const DATA_FILE = path.join('/tmp', 'movies.json');
+const store = getStore('movies');
 
-// Fonction pour lire les films depuis le fichier
-function readMovies() {
+app.get('/.netlify/functions/api/movies', async (req, res) => {
+  console.log('GET /movies appelé');
   try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, 'utf8');
-      return JSON.parse(data);
-    }
+    const movies = await store.get('all') || [];
+    res.json(movies);
   } catch (error) {
     console.error('Error reading movies:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  return [];
-}
-
-// Fonction pour écrire les films dans le fichier
-function writeMovies(movies) {
-  try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(movies, null, 2));
-  } catch (error) {
-    console.error('Error writing movies:', error);
-  }
-}
-
-app.get('/.netlify/functions/api/movies', (req, res) => {
-  console.log('GET /movies appelé');
-  const movies = readMovies();
-  res.json(movies);
 });
 
-app.post('/.netlify/functions/api/movies', (req, res) => {
+app.post('/.netlify/functions/api/movies', async (req, res) => {
   console.log('POST /movies appelé');
-  const newMovie = req.body;
-  newMovie.id = Date.now();
-  const movies = readMovies();
-  movies.push(newMovie);
-  writeMovies(movies);
-  res.status(201).json(newMovie);
+  try {
+    const newMovie = req.body;
+    newMovie.id = Date.now();
+    let movies = await store.get('all') || [];
+    movies.push(newMovie);
+    await store.set('all', movies);
+    res.status(201).json(newMovie);
+  } catch (error) {
+    console.error('Error adding movie:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
-app.delete('/.netlify/functions/api/movies/:id', (req, res) => {
+app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
   console.log('DELETE /movies/:id appelé');
-  const id = parseInt(req.params.id);
-  let movies = readMovies();
-  movies = movies.filter(movie => movie.id !== id);
-  writeMovies(movies);
-  res.status(204).send();
+  try {
+    const id = parseInt(req.params.id);
+    let movies = await store.get('all') || [];
+    movies = movies.filter(movie => movie.id !== id);
+    await store.set('all', movies);
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting movie:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 app.use((req, res) => {
