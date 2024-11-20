@@ -12,14 +12,23 @@ let store;
 
 async function initializeStore() {
   try {
-    store = getStore('movies');
+    store = getStore({
+      name: 'movies',
+      siteID: process.env.NETLIFY_BLOBS_SITE_ID,
+      token: process.env.NETLIFY_BLOBS_TOKEN
+    });
     console.log('Netlify Blobs store initialized successfully');
   } catch (error) {
     console.error('Error initializing Netlify Blobs store:', error);
   }
 }
 
-initializeStore();
+app.use(async (req, res, next) => {
+  if (!store) {
+    await initializeStore();
+  }
+  next();
+});
 
 app.get('/.netlify/functions/api/movies', async (req, res) => {
   console.log('GET /movies appelé');
