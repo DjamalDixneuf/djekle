@@ -2,41 +2,36 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { getStore } = require('@netlify/blobs');
+const fs = require('fs').promises;
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-let store;
+const DATA_FILE = path.join('/tmp', 'movies.json');
 
-async function initializeStore() {
+async function readMovies() {
   try {
-    store = getStore({
-      name: 'movies',
-      siteID: process.env.NETLIFY_BLOBS_SITE_ID,
-      token: process.env.NETLIFY_BLOBS_TOKEN
-    });
-    console.log('Netlify Blobs store initialized successfully');
+    const data = await fs.readFile(DATA_FILE, 'utf8');
+    return JSON.parse(data);
   } catch (error) {
-    console.error('Error initializing Netlify Blobs store:', error);
+    if (error.code === 'ENOENT') {
+      // Le fichier n'existe pas encore, retourner un tableau vide
+      return [];
+    }
+    throw error;
   }
 }
 
-app.use(async (req, res, next) => {
-  if (!store) {
-    await initializeStore();
-  }
-  next();
-});
+async function writeMovies(movies) {
+  await fs.writeFile(DATA_FILE, JSON.stringify(movies, null, 2));
+}
 
 app.get('/.netlify/functions/api/movies', async (req, res) => {
   console.log('GET /movies appelé');
   try {
-    if (!store) {
-      throw new Error('Netlify Blobs store not initialized');
-    }
-    const movies = await store.get('all') || [];
+    const movies = await readMovies();
     res.json(movies);
   } catch (error) {
     console.error('Error reading movies:', error);
@@ -47,14 +42,11 @@ app.get('/.netlify/functions/api/movies', async (req, res) => {
 app.post('/.netlify/functions/api/movies', async (req, res) => {
   console.log('POST /movies appelé');
   try {
-    if (!store) {
-      throw new Error('Netlify Blobs store not initialized');
-    }
     const newMovie = req.body;
     newMovie.id = Date.now();
-    let movies = await store.get('all') || [];
+    let movies = await readMovies();
     movies.push(newMovie);
-    await store.set('all', movies);
+    await writeMovies(movies);
     res.status(201).json(newMovie);
   } catch (error) {
     console.error('Error adding movie:', error);
@@ -65,13 +57,10 @@ app.post('/.netlify/functions/api/movies', async (req, res) => {
 app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
   console.log('DELETE /movies/:id appelé');
   try {
-    if (!store) {
-      throw new Error('Netlify Blobs store not initialized');
-    }
     const id = parseInt(req.params.id);
-    let movies = await store.get('all') || [];
+    let movies = await readMovies();
     movies = movies.filter(movie => movie.id !== id);
-    await store.set('all', movies);
+    await writeMovies(movies);
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting movie:', error);
