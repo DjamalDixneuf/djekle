@@ -2,36 +2,29 @@ const express = require('express');
 const serverless = require('serverless-http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const fs = require('fs').promises;
-const path = require('path');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const DATA_FILE = path.join('/tmp', 'movies.json');
+let cachedDb = null;
 
-async function readMovies() {
-  try {
-    const data = await fs.readFile(DATA_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      // Le fichier n'existe pas encore, retourner un tableau vide
-      return [];
-    }
-    throw error;
+async function connectToDatabase() {
+  if (cachedDb) {
+    return cachedDb;
   }
-}
-
-async function writeMovies(movies) {
-  await fs.writeFile(DATA_FILE, JSON.stringify(movies, null, 2));
+  const client = await MongoClient.connect(process.env.MONGODB_URI);
+  const db = client.db('jekledb');
+  cachedDb = db;
+  return db;
 }
 
 app.get('/.netlify/functions/api/movies', async (req, res) => {
   console.log('GET /movies appelé');
   try {
-    const movies = await readMovies();
+    const db = await connectToDatabase();
+    const movies = await db.collection('movies').find({}).toArray();
     res.json(movies);
   } catch (error) {
     console.error('Error reading movies:', error);
@@ -42,12 +35,10 @@ app.get('/.netlify/functions/api/movies', async (req, res) => {
 app.post('/.netlify/functions/api/movies', async (req, res) => {
   console.log('POST /movies appelé');
   try {
+    const db = await connectToDatabase();
     const newMovie = req.body;
-    newMovie.id = Date.now();
-    let movies = await readMovies();
-    movies.push(newMovie);
-    await writeMovies(movies);
-    res.status(201).json(newMovie);
+    const result = await db.collection('movies').insertOne(newMovie);
+    res.status(201).json({ ...newMovie, _id: result.insertedId });
   } catch (error) {
     console.error('Error adding movie:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
@@ -57,10 +48,9 @@ app.post('/.netlify/functions/api/movies', async (req, res) => {
 app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
   console.log('DELETE /movies/:id appelé');
   try {
-    const id = parseInt(req.params.id);
-    let movies = await readMovies();
-    movies = movies.filter(movie => movie.id !== id);
-    await writeMovies(movies);
+    const db = await connectToDatabase();
+    const id = req.params.id;
+    await db.collection('movies').deleteOne({ _id: new ObjectId(id) });
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting movie:', error);
