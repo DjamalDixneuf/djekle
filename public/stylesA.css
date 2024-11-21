@@ -1,30 +1,23 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #0a0b0f;
+    background-color: #0a0b0f; /* Gray-900 */
     color: white;
-    margin: 0;
-    padding: 0;
 }
 
 .container {
     width: 90%;
     margin: 0 auto;
-    padding: 20px 0;
 }
 
 header {
-    background-color: #12141c;
-    border: 1px solid #1a1d28;
+    background-color: #12141c; /* Gray-800 */
+    border: 1px solid #1a1d28; 
     padding: 16px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
 }
 
 h1 {
     font-size: 24px;
     font-weight: bold;
-    margin: 0;
 }
 
 .icon-container {
@@ -67,58 +60,60 @@ h1 {
     background-color: #2d3748;
     border-radius: 8px;
     overflow: hidden;
+    width: 100%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px;
-    transition: transform 0.3s, width 0.3s, height 0.3s;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
 }
 
 .card img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+    width: 180px;  /* Width of the image */
+    height: 260px; /* Height of the image */
+    object-fit: cover; /* Ensures the image covers the space without distortion */
     margin-bottom: 12px;
 }
 
 .card-content {
     text-align: center;
-    width: 100%;
 }
 
 .card h3 {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 8px;
-    color: #ffffff;
+    color: #ffffff; /* Ensures the title is visible */
 }
 
 .card p {
-    color: #d1d5db;
+    color: #d1d5db; /* Gray-400 */
     font-size: 14px;
     margin-bottom: 12px;
 }
 
-.watch-button {
+button {
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 12px;
     font-size: 14px;
-    transition: background-color 0.3s;
 }
-
-.watch-button:hover {
-    background-color: #1557b0;
-}
-
-.iconL-button, .iconU-button {
+.iconL-button {
     position: absolute;
     width: 10%;
+    position: absolute; /* Permet de positionner librement */
+    top: 60px; /* Ajuste la position verticale */
+    right: 10px; /* Ajuste la position horizontale */
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -127,26 +122,40 @@ h1 {
     color: white;
 }
 
-.iconL-button {
-    top: 60px;
-    right: 10px;
+.iconU-button {
+    position: absolute;
+    width: 10%;
+    position: absolute; /* Permet de positionner librement */
+    top: 10px; /* Ajuste la position verticale */
+    right: 10px; /* Ajuste la position horizontale */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #1a73e8;
+    color: white;
 }
 
-.iconU-button {
-    top: 10px;
-    right: 10px;
+button:hover {
+    background-color: #45a049;
+}
+
+button:disabled {
+    background-color: #a0aec0;
 }
 
 .icon-svg {
-    width: 20px;
+    width: 20px; /* Taille réduite de l'icône */
     height: 20px;
 }
-
 .iconf-svg {
-    width: 60px;
+    width: 60px; /* Taille réduite de l'icône */
     height: 50px;
 }
-
+/* Optional: Add a smooth transition effect for the cards when hovered */
+.card:hover {
+    transform: translateY(-10px);
+}
 .modal {
     display: none;
     position: fixed;
@@ -180,6 +189,7 @@ h1 {
 .close:focus {
     color: #fff;
     text-decoration: none;
+    cursor: pointer;
 }
 
 #videoPlayer {
@@ -190,42 +200,4 @@ h1 {
 
 #movieDetails {
     color: #fff;
-}
-
-/* Mobile Styles */
-@media screen and (max-width: 768px) {
-    .card {
-        width: 40%;
-        height: 40%;
-        margin: 10px auto;
-    }
-
-    .card img {
-        height: 70%;
-        object-fit: cover;
-    }
-
-    .watch-button {
-        display: block;
-    }
-
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(40%, 1fr));
-    }
-}
-
-/* Desktop Styles */
-@media screen and (min-width: 769px) {
-    .card {
-        width: 100%;
-        height: auto;
-    }
-
-    .watch-button {
-        display: none;
-    }
-
-    .card:hover .watch-button {
-        display: block;
-    }
 }
