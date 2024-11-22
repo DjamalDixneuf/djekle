@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jekle - Films et Séries Disponibles</title>
     <link rel="stylesheet" href="stylesA.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body class="bg-gray-900 text-white">
     <header class="bg-gray-800 p-4">
@@ -31,6 +32,7 @@
             <!-- Les films et séries seront ajoutés ici dynamiquement avec JavaScript -->
         </div>
     </main>
+
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -46,9 +48,13 @@
                 sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
             ></iframe>
             <div id="movieDetails"></div>
+            <button id="watchButton" class="watch-button" style="display: none;">Regarder</button>
+            <button id="downloadButton" class="download-button" style="display: none;">Télécharger</button>
         </div>
     </div>
-<button id="toggleDesktopMode">Mode Ordinateur</button>
+
+    <button id="toggleDesktopMode">Mode Ordinateur</button>
+
     <script src="user.js"></script>
 </body>
 </html>
