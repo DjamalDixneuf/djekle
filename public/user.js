@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.getElementsByClassName('close')[0];
     const videoPlayer = document.getElementById('videoPlayer');
     const movieDetails = document.getElementById('movieDetails');
+    const episodeSelector = document.getElementById('episodeSelector');
     const logoutButton = document.getElementById('logoutButton');
 
     let movies = [];
@@ -82,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-content">
                     <h3>${movie.title}</h3>
                     <p>${movie.duration}</p>
+                    <p>${movie.type === 'série' ? movie.episodeCount + ' épisodes' : 'Film'}</p>
                     <button onclick="watchMovie('${movie._id}')">Regarder</button>
                 </div>
             `;
@@ -100,13 +102,33 @@ document.addEventListener('DOMContentLoaded', function() {
     window.watchMovie = function(id) {
         const movie = movies.find(m => m._id === id);
         if (movie) {
-            const embedUrl = getEmbedUrl(movie.videoUrl);
-            videoPlayer.src = embedUrl;
-            movieDetails.innerHTML = `
-                <h2>${movie.title}</h2>
-                <p>${movie.duration}</p>
-                <p>${movie.description}</p>
-            `;
+            if (movie.type === 'série') {
+                episodeSelector.innerHTML = '<option value="">Sélectionnez un épisode</option>';
+                movie.episodes.forEach((episode, index) => {
+                    episodeSelector.innerHTML += `<option value="${index}">Épisode ${index + 1}</option>`;
+                });
+                episodeSelector.style.display = 'block';
+                episodeSelector.onchange = function() {
+                    const selectedEpisode = movie.episodes[this.value];
+                    if (selectedEpisode) {
+                        const embedUrl = getEmbedUrl(selectedEpisode.url);
+                        videoPlayer.src = embedUrl;
+                        movieDetails.innerHTML = `
+                            <h2>${movie.title} - Épisode ${parseInt(this.value) + 1}</h2>
+                            <p>${selectedEpisode.description}</p>
+                        `;
+                    }
+                };
+            } else {
+                episodeSelector.style.display = 'none';
+                const embedUrl = getEmbedUrl(movie.videoUrl);
+                videoPlayer.src = embedUrl;
+                movieDetails.innerHTML = `
+                    <h2>${movie.title}</h2>
+                    <p>${movie.duration}</p>
+                    <p>${movie.description}</p>
+                `;
+            }
             modal.style.display = 'block';
         }
     }
@@ -129,10 +151,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
-            // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
-            // Par exemple, supprimer les tokens d'authentification du localStorage
             localStorage.removeItem('authToken');
-            // Redirection vers la page de connexion
             window.location.href = 'index.html';
         });
     }
