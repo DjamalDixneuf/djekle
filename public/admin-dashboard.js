@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const movieTableBody = document.getElementById('movieTableBody');
+    const requestTableBody = document.getElementById('requestTableBody');
     const addMovieForm = document.getElementById('addMovieForm');
     const logoutButton = document.getElementById('logoutButton');
     const typeSelect = document.getElementById('type');
@@ -54,6 +55,27 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function loadMovieRequests() {
+        showLoading();
+        fetch(`${API_URL}/movie-requests`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(requests => {
+                displayMovieRequests(requests);
+            })
+            .catch(error => {
+                console.error('Error loading movie requests:', error);
+                alert('Error loading movie requests. Please try again.');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+    }
+
     function displayMovies(movies) {
         movieTableBody.innerHTML = '';
         movies.forEach(movie => {
@@ -70,6 +92,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             `;
             movieTableBody.appendChild(row);
+        });
+    }
+
+    function displayMovieRequests(requests) {
+        requestTableBody.innerHTML = '';
+        requests.forEach(request => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${request.title}</td>
+                <td><a href="${request.imdbLink}" target="_blank">${request.imdbLink}</a></td>
+                <td>${request.comment || 'N/A'}</td>
+                <td>
+                    <button onclick="approveRequest('${request._id}')" class="approve-btn">Approve</button>
+                    <button onclick="rejectRequest('${request._id}')" class="reject-btn">Reject</button>
+                </td>
+            `;
+            requestTableBody.appendChild(row);
         });
     }
 
@@ -91,6 +130,43 @@ document.addEventListener('DOMContentLoaded', function() {
                     hideLoading();
                 });
         }
+    }
+
+    window.approveRequest = function(id) {
+        showLoading();
+        fetch(`${API_URL}/movie-requests/${id}/approve`, { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                loadMovieRequests();
+                loadMovies();
+            })
+            .catch(error => {
+                console.error('Error approving request:', error);
+                alert('Error approving request. Please try again.');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+    }
+
+    window.rejectRequest = function(id) {
+        showLoading();
+        fetch(`${API_URL}/movie-requests/${id}/reject`, { method: 'POST' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                loadMovieRequests();
+            })
+            .catch(error => {
+                console.error('Error rejecting request:', error);
+                alert('Error rejecting request. Please try again.');
+            })
+            .finally(() => {
+                hideLoading();
+            });
     }
 
     if (typeSelect) {
@@ -183,5 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Initial load
     loadMovies();
+    loadMovieRequests();
 });
