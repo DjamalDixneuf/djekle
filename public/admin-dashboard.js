@@ -125,29 +125,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadMovies() {
-        console.log('Chargement des films...');
-        showLoading();
-        fetch(`${API_URL}/movies`)
-        .then(response => {
-            console.log('Réponse reçue:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Films reçus:', data);
-            movies = Array.isArray(data) ? data : [];
-            displayMovies(movies);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            alert('Erreur lors du chargement des films. Veuillez réessayer plus tard.');
-        })
-        .finally(() => {
-            hideLoading();
-        });
-    }
+    console.log('Chargement des films...');
+    showLoading();
+    fetch(`${API_URL}/movies`)
+    .then(response => {
+        console.log('Réponse reçue:', response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Films reçus:', data);
+        movies = Array.isArray(data) ? data : [];
+        displayMovies(movies);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert(`Erreur lors du chargement des films: ${error.message}`);
+    })
+    .finally(() => {
+        hideLoading();
+    });
+}
 
     addMovieForm.addEventListener('submit', addMovie);
     searchBar.addEventListener('input', filterMovies);
