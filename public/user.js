@@ -119,6 +119,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         `;
                     }
                 };
+                // Afficher le premier épisode par défaut
+                episodeSelector.value = "0";
+                episodeSelector.onchange();
             } else {
                 episodeSelector.style.display = 'none';
                 const embedUrl = getEmbedUrl(movie.videoUrl);
