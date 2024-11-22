@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeSelect = document.getElementById('type');
     const episodesContainer = document.getElementById('episodesContainer');
     const episodeCountInput = document.getElementById('episodeCount');
+    const filmFields = document.getElementById('filmFields');
+    const serieFields = document.getElementById('serieFields');
 
     const API_URL = '/.netlify/functions/api';
 
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${movie.genre}</td>
                 <td>${movie.duration}</td>
                 <td>${movie.releaseYear}</td>
-                <td>${movie.type === 'série' ? movie.episodeCount + ' épisodes' : 'N/A'}</td>
+                <td>${movie.type === 'série' ? (movie.episodes ? movie.episodes.length : 'N/A') : 'N/A'}</td>
                 <td>
                     <button onclick="deleteMovie('${movie._id}')" class="delete-btn">Delete</button>
                 </td>
@@ -94,11 +96,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeSelect) {
         typeSelect.addEventListener('change', function() {
             if (this.value === 'série') {
-                episodeCountInput.style.display = 'block';
-                episodesContainer.style.display = 'block';
+                filmFields.style.display = 'none';
+                serieFields.style.display = 'block';
             } else {
-                episodeCountInput.style.display = 'none';
-                episodesContainer.style.display = 'none';
+                filmFields.style.display = 'block';
+                serieFields.style.display = 'none';
                 episodesContainer.innerHTML = '';
             }
         });
@@ -110,10 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
             episodesContainer.innerHTML = '';
             for (let i = 1; i <= count; i++) {
                 episodesContainer.innerHTML += `
-                    <div>
+                    <div class="episode-fields">
                         <h4>Épisode ${i}</h4>
-                        <input type="text" name="episodeUrl${i}" placeholder="URL de l'épisode ${i}" required>
-                        <textarea name="episodeDescription${i}" placeholder="Description de l'épisode ${i}" required></textarea>
+                        <label for="episodeUrl${i}">URL de l'épisode ${i}</label>
+                        <input type="url" id="episodeUrl${i}" name="episodeUrl${i}" required>
+                        <label for="episodeDescription${i}">Description de l'épisode ${i}</label>
+                        <textarea id="episodeDescription${i}" name="episodeDescription${i}" required></textarea>
                     </div>
                 `;
             }
@@ -137,9 +141,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     delete movieData[`episodeUrl${i}`];
                     delete movieData[`episodeDescription${i}`];
                 }
+                delete movieData.singleVideoUrl;
             } else {
                 movieData.videoUrl = movieData.singleVideoUrl;
                 delete movieData.singleVideoUrl;
+                delete movieData.episodeCount;
             }
 
             showLoading();
