@@ -158,6 +158,10 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'index.html';
         });
     }
-
+    if (userButton) {
+        userButton.addEventListener('click', function() {
+            window.location.href = 'requeste movie.html';
+        });
+    }
     loadMovies();
 });
