@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-document.addEventListener('DOMContentLoaded', function() {
     const moviesContainer = document.getElementById('moviesContainer');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('videoModal');
@@ -8,36 +7,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const movieDetails = document.getElementById('movieDetails');
     const episodeSelector = document.getElementById('episodeSelector');
     const logoutButton = document.getElementById('logoutButton');
+    const userButton = document.getElementById('userButton');
     const toggleDesktopModeButton = document.getElementById('toggleDesktopMode');
+
     let movies = [];
     
     const API_URL = '/.netlify/functions/api';
 
-    function toggleDesktopMode() {
-        document.body.classList.toggle('desktop-mode');
-        if (document.body.classList.contains('desktop-mode')) {
-            toggleDesktopModeButton.textContent = 'Mode Mobile';
-        } else {
-            toggleDesktopModeButton.textContent = 'Mode Ordinateur';
-        }
-    }
-
-    if (toggleDesktopModeButton) {
-        toggleDesktopModeButton.addEventListener('click', toggleDesktopMode);
-    }
-
-    function updateToggleButtonVisibility() {
-        if (window.innerWidth <= 768) {
-            toggleDesktopModeButton.style.display = 'block';
-        } else {
-            toggleDesktopModeButton.style.display = 'none';
-            document.body.classList.remove('desktop-mode');
-        }
-    }
-
-    window.addEventListener('resize', updateToggleButtonVisibility);
-    updateToggleButtonVisibility();
-    
     function showLoading() {
         const loadingElement = document.createElement('div');
         loadingElement.id = 'loading';
@@ -109,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-content">
                     <h3>${movie.title}</h3>
                     <p>${movie.duration}</p>
-                    <p>${movie.type === 'série' ? movie.episodeCount + ' épisodes' : 'Film'}</p>
+                    <p>${movie.type === 'série' ? (movie.episodes ? movie.episodes.length : '0') + ' épisodes' : 'Film'}</p>
                     <button onclick="watchMovie('${movie._id}')">Regarder</button>
                 </div>
             `;
@@ -128,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.watchMovie = function(id) {
         const movie = movies.find(m => m._id === id);
         if (movie) {
-            if (movie.type === 'série') {
+            if (movie.type === 'série' && movie.episodes && movie.episodes.length > 0) {
                 episodeSelector.innerHTML = '<option value="">Sélectionnez un épisode</option>';
                 movie.episodes.forEach((episode, index) => {
                     episodeSelector.innerHTML += `<option value="${index}">Épisode ${index + 1}</option>`;
@@ -176,6 +152,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function toggleDesktopMode() {
+        document.body.classList.toggle('desktop-mode');
+        if (document.body.classList.contains('desktop-mode')) {
+            toggleDesktopModeButton.textContent = 'Mode Mobile';
+        } else {
+            toggleDesktopModeButton.textContent = 'Mode Ordinateur';
+        }
+    }
+
+    function updateToggleButtonVisibility() {
+        if (window.innerWidth <= 768) {
+            toggleDesktopModeButton.style.display = 'block';
+        } else {
+            toggleDesktopModeButton.style.display = 'none';
+            document.body.classList.remove('desktop-mode');
+        }
+    }
+
     searchInput.addEventListener('input', filterMovies);
 
     if (logoutButton) {
@@ -184,10 +178,19 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = 'index.html';
         });
     }
+
     if (userButton) {
         userButton.addEventListener('click', function() {
             window.location.href = 'requeste movie.html';
         });
     }
+
+    if (toggleDesktopModeButton) {
+        toggleDesktopModeButton.addEventListener('click', toggleDesktopMode);
+    }
+
+    window.addEventListener('resize', updateToggleButtonVisibility);
+    updateToggleButtonVisibility();
+
     loadMovies();
 });
