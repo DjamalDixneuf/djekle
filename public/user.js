@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const moviesContainer = document.getElementById('moviesContainer');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('videoModal');
@@ -7,11 +8,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const movieDetails = document.getElementById('movieDetails');
     const episodeSelector = document.getElementById('episodeSelector');
     const logoutButton = document.getElementById('logoutButton');
-
+    const toggleDesktopModeButton = document.getElementById('toggleDesktopMode');
     let movies = [];
     
     const API_URL = '/.netlify/functions/api';
 
+    function toggleDesktopMode() {
+        document.body.classList.toggle('desktop-mode');
+        if (document.body.classList.contains('desktop-mode')) {
+            toggleDesktopModeButton.textContent = 'Mode Mobile';
+        } else {
+            toggleDesktopModeButton.textContent = 'Mode Ordinateur';
+        }
+    }
+
+    if (toggleDesktopModeButton) {
+        toggleDesktopModeButton.addEventListener('click', toggleDesktopMode);
+    }
+
+    function updateToggleButtonVisibility() {
+        if (window.innerWidth <= 768) {
+            toggleDesktopModeButton.style.display = 'block';
+        } else {
+            toggleDesktopModeButton.style.display = 'none';
+            document.body.classList.remove('desktop-mode');
+        }
+    }
+
+    window.addEventListener('resize', updateToggleButtonVisibility);
+    updateToggleButtonVisibility();
+    
     function showLoading() {
         const loadingElement = document.createElement('div');
         loadingElement.id = 'loading';
