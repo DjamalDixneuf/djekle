@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jekle - Films Disponibles</title>
+    <title>Jekle - Films et Séries Disponibles</title>
     <link rel="stylesheet" href="stylesA.css">
 </head>
 <body class="bg-gray-900 text-white">
@@ -11,12 +11,12 @@
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-4">
                 <div class="icon-container">
-          <img src="film.svg" alt="Film Icon" class="icon-svg">
-        </div>
+                    <img src="film.svg" alt="Film Icon" class="icon-svg">
+                </div>
                 <h1 class="text-2xl font-bold">Jekle Entertainment</h1>
             </div>
             <div class="flex items-center space-x-4">
-                <input type="search" id="searchInput" placeholder="Rechercher un film..." class="w-64 input">
+                <input type="search" id="searchInput" placeholder="Rechercher un film ou une série..." class="w-64 input">
                 <button class="iconU-button" id="userButton">
                     <img src="user.svg" alt="User" class="icon-svg">
                 </button>
@@ -28,14 +28,15 @@
     </header>
 
     <main class="container mx-auto py-8">
-        <h2 class="text-2xl font-semibold mb-4">Films disponibles</h2>
+        <h2 class="text-2xl font-semibold mb-4">Films et Séries disponibles</h2>
         <div id="moviesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Les films seront ajoutés ici dynamiquement avec JavaScript -->
+            <!-- Les films et séries seront ajoutés ici dynamiquement avec JavaScript -->
         </div>
     </main>
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
+            <select id="episodeSelector" style="display: none; margin-bottom: 10px;"></select>
             <iframe 
                 id="videoPlayer" 
                 width="100%" 
