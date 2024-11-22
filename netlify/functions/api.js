@@ -50,10 +50,18 @@ app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
   try {
     const db = await connectToDatabase();
     const id = req.params.id;
+    
+    // Vérification de la validité de l'ID
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "ID de film invalide" });
+    }
+
     const result = await db.collection('movies').deleteOne({ _id: new ObjectId(id) });
+    
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "Film non trouvé" });
     }
+    
     res.status(200).json({ message: "Film supprimé avec succès" });
   } catch (error) {
     console.error('Error deleting movie:', error);
