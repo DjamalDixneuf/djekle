@@ -50,8 +50,11 @@ app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
   try {
     const db = await connectToDatabase();
     const id = req.params.id;
-    await db.collection('movies').deleteOne({ _id: new ObjectId(id) });
-    res.status(204).send();
+    const result = await db.collection('movies').deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Film non trouvé" });
+    }
+    res.status(200).json({ message: "Film supprimé avec succès" });
   } catch (error) {
     console.error('Error deleting movie:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
