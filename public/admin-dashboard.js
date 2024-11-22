@@ -94,25 +94,27 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
     window.deleteMovie = function(id) {
-        showLoading();
-        fetch(`${API_URL}/movies/${id}`, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            console.log('Film supprimé avec succès');
-            loadMovies();
-        })
-        .catch((error) => {
-            console.error('Erreur:', error);
-            alert(`Erreur lors de la suppression du film: ${error.message}`);
-        })
-        .finally(() => {
-            hideLoading();
-        });
-    }
+    showLoading();
+    fetch(`${API_URL}/movies/${id}`, {
+        method: 'DELETE',
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP error! status: ${response.status}, body: ${text}`);
+            });
+        }
+        console.log('Film supprimé avec succès');
+        return loadMovies();
+    })
+    .catch((error) => {
+        console.error('Erreur:', error);
+        alert(`Erreur lors de la suppression du film: ${error.message}`);
+    })
+    .finally(() => {
+        hideLoading();
+    });
+}
 
     function filterMovies() {
         const searchTerm = searchBar.value.toLowerCase();
