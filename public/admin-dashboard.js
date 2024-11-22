@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const movieTableBody = document.getElementById('movieTableBody');
     const addMovieForm = document.getElementById('addMovieForm');
     const logoutButton = document.getElementById('logoutButton');
+    const typeSelect = document.getElementById('type');
+    const episodesContainer = document.getElementById('episodesContainer');
+    const episodeCountInput = document.getElementById('episodeCount');
 
     const API_URL = '/.netlify/functions/api';
 
@@ -55,9 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${movie.title}</td>
+                <td>${movie.type}</td>
                 <td>${movie.genre}</td>
                 <td>${movie.duration}</td>
                 <td>${movie.releaseYear}</td>
+                <td>${movie.type === 'série' ? movie.episodeCount + ' épisodes' : 'N/A'}</td>
                 <td>
                     <button onclick="deleteMovie('${movie._id}')" class="delete-btn">Delete</button>
                 </td>
@@ -86,11 +91,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            if (this.value === 'série') {
+                episodeCountInput.style.display = 'block';
+                episodesContainer.style.display = 'block';
+            } else {
+                episodeCountInput.style.display = 'none';
+                episodesContainer.style.display = 'none';
+            }
+        });
+    }
+
+    if (episodeCountInput) {
+        episodeCountInput.addEventListener('input', function() {
+            const count = parseInt(this.value) || 0;
+            episodesContainer.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                episodesContainer.innerHTML += `
+                    <div>
+                        <h4>Épisode ${i}</h4>
+                        <input type="text" name="episodeUrl${i}" placeholder="URL de l'épisode ${i}" required>
+                        <textarea name="episodeDescription${i}" placeholder="Description de l'épisode ${i}" required></textarea>
+                    </div>
+                `;
+            }
+        });
+    }
+
     if (addMovieForm) {
         addMovieForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(addMovieForm);
             const movieData = Object.fromEntries(formData.entries());
+
+            if (movieData.type === 'série') {
+                movieData.episodes = [];
+                const episodeCount = parseInt(movieData.episodeCount) || 0;
+                for (let i = 1; i <= episodeCount; i++) {
+                    movieData.episodes.push({
+                        url: movieData[`episodeUrl${i}`],
+                        description: movieData[`episodeDescription${i}`]
+                    });
+                    delete movieData[`episodeUrl${i}`];
+                    delete movieData[`episodeDescription${i}`];
+                }
+            }
 
             showLoading();
             fetch(`${API_URL}/movies`, {
@@ -122,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
-            // Ajoutez ici la logique de déconnexion
             localStorage.removeItem('authToken');
             window.location.href = 'index.html';
         });
