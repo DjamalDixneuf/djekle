@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.getElementsByClassName('close')[0];
     const videoPlayer = document.getElementById('videoPlayer');
     const movieDetails = document.getElementById('movieDetails');
+    const logoutButton = document.getElementById('logoutButton');
 
     let movies = [];
     
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="card-content">
                     <h3>${movie.title}</h3>
                     <p>${movie.duration}</p>
-                    <button onclick="watchMovie(${movie.id})">Regarder</button>
+                    <button onclick="watchMovie('${movie._id}')">Regarder</button>
                 </div>
             `;
             moviesContainer.appendChild(movieCard);
@@ -97,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.watchMovie = function(id) {
-        const movie = movies.find(m => m.id === id);
+        const movie = movies.find(m => m._id === id);
         if (movie) {
             const embedUrl = getEmbedUrl(movie.videoUrl);
             videoPlayer.src = embedUrl;
@@ -126,16 +127,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', filterMovies);
 
-    loadMovies();
-});
-// Gestion de la déconnexion
-    const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
             // Ici, vous pouvez ajouter toute logique de nettoyage nécessaire
             // Par exemple, supprimer les tokens d'authentification du localStorage
-
+            localStorage.removeItem('authToken');
             // Redirection vers la page de connexion
             window.location.href = 'index.html';
         });
     }
+
+    loadMovies();
+});
