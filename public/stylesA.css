@@ -34,6 +34,32 @@ h1 {
     left: 60px;
 }
 
+.watch-button, .download-button {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.watch-button:hover, .download-button:hover {
+    background-color: #45a049;
+}
+
+.watch-button {
+    background-color: #008CBA;
+}
+
+.watch-button:hover {
+    background-color: #007B9A;
+}
+
 .icon-button {
     background: none;
     border: none;
