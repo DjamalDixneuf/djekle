@@ -9,32 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.getElementById('logoutButton');
     const userButton = document.getElementById('userButton');
     const toggleDesktopModeButton = document.getElementById('toggleDesktopMode');
+    const loadingAnimation = document.getElementById('loadingAnimation');
 
     let movies = [];
     
     const API_URL = '/.netlify/functions/api';
 
     function showLoading() {
-        const loadingElement = document.createElement('div');
-        loadingElement.id = 'loading';
-        loadingElement.textContent = 'Chargement...';
-        loadingElement.style.position = 'fixed';
-        loadingElement.style.top = '50%';
-        loadingElement.style.left = '50%';
-        loadingElement.style.transform = 'translate(-50%, -50%)';
-        loadingElement.style.padding = '10px';
-        loadingElement.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-        loadingElement.style.color = 'white';
-        loadingElement.style.borderRadius = '5px';
-        loadingElement.style.zIndex = '1000';
-        document.body.appendChild(loadingElement);
+        loadingAnimation.style.display = 'flex';
     }
 
     function hideLoading() {
-        const loadingElement = document.getElementById('loading');
-        if (loadingElement) {
-            loadingElement.remove();
-        }
+        loadingAnimation.style.display = 'none';
     }
     
     function loadMovies() {
