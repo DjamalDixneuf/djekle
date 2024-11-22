@@ -9,8 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutButton = document.getElementById('logoutButton');
     const userButton = document.getElementById('userButton');
     const toggleDesktopModeButton = document.getElementById('toggleDesktopMode');
+    const watchButton = document.getElementById('watchButton');
+    const downloadButton = document.getElementById('downloadButton');
 
     let movies = [];
+    let currentMovie = null;
+    let currentEpisode = null;
     
     const API_URL = '/.netlify/functions/api';
 
@@ -102,41 +106,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.watchMovie = function(id) {
-        const movie = movies.find(m => m._id === id);
-        if (movie) {
-            if (movie.type === 'série' && movie.episodes && movie.episodes.length > 0) {
+        currentMovie = movies.find(m => m._id === id);
+        if (currentMovie) {
+            if (currentMovie.type === 'série') {
                 episodeSelector.innerHTML = '<option value="">Sélectionnez un épisode</option>';
-                movie.episodes.forEach((episode, index) => {
+                currentMovie.episodes.forEach((episode, index) => {
                     episodeSelector.innerHTML += `<option value="${index}">Épisode ${index + 1}</option>`;
                 });
                 episodeSelector.style.display = 'block';
+                watchButton.style.display = 'none';
+                downloadButton.style.display = 'none';
                 episodeSelector.onchange = function() {
-                    const selectedEpisode = movie.episodes[this.value];
-                    if (selectedEpisode) {
-                        const embedUrl = getEmbedUrl(selectedEpisode.url);
-                        videoPlayer.src = embedUrl;
+                    const selectedIndex = this.value;
+                    if (selectedIndex !== "") {
+                        currentEpisode = currentMovie.episodes[selectedIndex];
+                        watchButton.style.display = 'inline-block';
+                        downloadButton.style.display = 'inline-block';
                         movieDetails.innerHTML = `
-                            <h2>${movie.title} - Épisode ${parseInt(this.value) + 1}</h2>
-                            <p>${selectedEpisode.description}</p>
+                            <h2>${currentMovie.title} - Épisode ${parseInt(selectedIndex) + 1}</h2>
+                            <p>${currentEpisode.description}</p>
                         `;
+                    } else {
+                        watchButton.style.display = 'none';
+                        downloadButton.style.display = 'none';
+                        movieDetails.innerHTML = '';
                     }
                 };
-                // Afficher le premier épisode par défaut
-                episodeSelector.value = "0";
-                episodeSelector.onchange();
             } else {
                 episodeSelector.style.display = 'none';
-                const embedUrl = getEmbedUrl(movie.videoUrl);
-                videoPlayer.src = embedUrl;
+                watchButton.style.display = 'inline-block';
+                downloadButton.style.display = 'inline-block';
                 movieDetails.innerHTML = `
-                    <h2>${movie.title}</h2>
-                    <p>${movie.duration}</p>
-                    <p>${movie.description}</p>
+                    <h2>${currentMovie.title}</h2>
+                    <p>${currentMovie.duration}</p>
+                    <p>${currentMovie.description}</p>
                 `;
             }
             modal.style.display = 'block';
         }
     }
+
+    watchButton.addEventListener('click', function() {
+        if (currentMovie) {
+            if (currentMovie.type === 'série' && currentEpisode) {
+                const embedUrl = getEmbedUrl(currentEpisode.url);
+                videoPlayer.src = embedUrl;
+            } else if (currentMovie.type !== 'série') {
+                const embedUrl = getEmbedUrl(currentMovie.videoUrl);
+                videoPlayer.src = embedUrl;
+            }
+        }
+    });
+
+    downloadButton.addEventListener('click', function() {
+        if (currentMovie) {
+            if (currentMovie.type === 'série' && currentEpisode) {
+                window.open(currentEpisode.url, '_blank');
+            } else if (currentMovie.type !== 'série') {
+                window.open(currentMovie.videoUrl, '_blank');
+            }
+        }
+    });
 
     if (closeBtn) {
         closeBtn.onclick = function() {
