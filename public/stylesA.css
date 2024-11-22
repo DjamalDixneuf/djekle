@@ -50,6 +50,31 @@ h1 {
     color: white;
 }
 
+#toggleDesktopMode {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #1a73e8;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    z-index: 1000;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #toggleDesktopMode {
+        display: block;
+    }
+}
+
+.desktop-mode {
+    min-width: 1024px;
+    overflow-x: auto;
+}
+
 .grid {
     display: grid;
     gap: 1.5rem;
