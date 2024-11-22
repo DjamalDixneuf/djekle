@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 episodeCountInput.style.display = 'none';
                 episodesContainer.style.display = 'none';
+                episodesContainer.innerHTML = '';
             }
         });
     }
@@ -136,6 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     delete movieData[`episodeUrl${i}`];
                     delete movieData[`episodeDescription${i}`];
                 }
+            } else {
+                movieData.videoUrl = movieData.singleVideoUrl;
+                delete movieData.singleVideoUrl;
             }
 
             showLoading();
