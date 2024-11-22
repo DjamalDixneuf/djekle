@@ -71,19 +71,36 @@
         }
         .return-button {
             position: absolute;
-         width: 10%;
-         position: absolute; /* Permet de positionner librement */
-         top: 50px; /* Ajuste la position verticale */
-          right: 1120px; /* Ajuste la position horizontale */
-         padding: 10px 20px;
-         border: none;
-        border-radius: 4px;
-          cursor: pointer;
- }</style>
+            width: 10%;
+            top: 50px;
+            right: 1120px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+        .return-button:hover {
+            background-color: #45b293;
+        }
+        #loadingIndicator {
+            display: none;
+            text-align: center;
+            font-size: 18px;
+            color: #4ecca3;
+            margin-top: 20px;
+        }
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <button class="return-button" onclick="window.location.href='user page.html'">Retour</button>
-    <div class="container">
+    <button class="return-button" onclick="window.location.href='user-page.html'">Retour</button>
     <div class="container">
         <h1>Demander un film/série</h1>
         <form id="requestForm">
@@ -98,6 +115,8 @@
             
             <button type="submit">Envoyer la demande</button>
         </form>
+
+        <div id="loadingIndicator">Chargement...</div>
 
         <div id="requestsList">
             <h2>Demandes en cours</h2>
@@ -115,10 +134,25 @@
         const requestForm = document.getElementById('requestForm');
         const requestsList = document.getElementById('requestsList');
         const moviesList = document.getElementById('moviesList');
+        const loadingIndicator = document.getElementById('loadingIndicator');
         let movies = [];
+
+        const API_URL = '/.netlify/functions/api';
+
+        function showLoading() {
+            loadingIndicator.style.display = 'block';
+        }
+
+        function hideLoading() {
+            loadingIndicator.style.display = 'none';
+        }
 
         function displayMovies(moviesToShow) {
             moviesList.innerHTML = '<h2>Films disponibles</h2>';
+            if (moviesToShow.length === 0) {
+                moviesList.innerHTML += '<p>Aucun film disponible pour le moment.</p>';
+                return;
+            }
             moviesToShow.forEach(movie => {
                 const movieItem = document.createElement('div');
                 movieItem.className = 'movie-item';
@@ -133,21 +167,90 @@
         }
 
         function loadMovies() {
-            fetch('http://localhost:3000/movies')
-                .then(response => response.json())
+            showLoading();
+            fetch(`${API_URL}/movies`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    movies = data.data;
+                    movies = data;
                     displayMovies(movies);
                 })
                 .catch((error) => {
                     console.error('Erreur lors du chargement des films:', error);
+                    moviesList.innerHTML = '<p class="error-message">Erreur lors du chargement des films. Veuillez réessayer plus tard.</p>';
+                })
+                .finally(() => {
+                    hideLoading();
                 });
         }
 
         function saveRequest(request) {
-            let requests = JSON.parse(localStorage.getItem('movieRequests')) || [];
-            requests.push(request);
-            localStorage.setItem('movieRequests', JSON.stringify(requests));
+            showLoading();
+            fetch(`${API_URL}/movie-requests`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(request)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Request saved:', data);
+                displayRequest(data);
+            })
+            .catch((error) => {
+                console.error('Error saving request:', error);
+                alert('Erreur lors de l\'enregistrement de la demande. Veuillez réessayer.');
+            })
+            .finally(() => {
+                hideLoading();
+            });
+        }
+
+        function displayRequest(request) {
+            const requestItem = document.createElement('div');
+            requestItem.className = 'request-item';
+            requestItem.innerHTML = `
+                <h3>${request.title}</h3>
+                <p>IMDB: <a href="${request.imdbLink}" target="_blank">${request.imdbLink}</a></p>
+                ${request.comment ? `<p>Commentaire: ${request.comment}</p>` : ''}
+            `;
+            requestsList.appendChild(requestItem);
+        }
+
+        function loadExistingRequests() {
+            showLoading();
+            fetch(`${API_URL}/movie-requests`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    requestsList.innerHTML = '<h2>Demandes en cours</h2>';
+                    if (data.length === 0) {
+                        requestsList.innerHTML += '<p>Aucune demande en cours.</p>';
+                    } else {
+                        data.forEach(displayRequest);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erreur lors du chargement des demandes:', error);
+                    requestsList.innerHTML = '<p class="error-message">Erreur lors du chargement des demandes. Veuillez réessayer plus tard.</p>';
+                })
+                .finally(() => {
+                    hideLoading();
+                });
         }
 
         requestForm.addEventListener('submit', function(e) {
@@ -160,24 +263,13 @@
             const request = { title, imdbLink, comment };
             saveRequest(request);
 
-            // Créer un nouvel élément pour la demande
-            const requestItem = document.createElement('div');
-            requestItem.className = 'request-item';
-            requestItem.innerHTML = `
-                <h3>${title}</h3>
-                <p>IMDB: <a href="${imdbLink}" target="_blank">${imdbLink}</a></p>
-                ${comment ? `<p>Commentaire: ${comment}</p>` : ''}
-            `;
-
-            // Ajouter la nouvelle demande à la liste
-            requestsList.appendChild(requestItem);
-
             // Réinitialiser le formulaire
             requestForm.reset();
         });
 
-        // Charger les films au chargement de la page
+        // Charger les films et les demandes existantes au chargement de la page
         loadMovies();
+        loadExistingRequests();
     });
     </script>
 </body>
