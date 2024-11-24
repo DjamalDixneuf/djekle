@@ -97,11 +97,27 @@
             text-align: center;
             margin-top: 20px;
         }
+        .alert {
+            background-color: #4ecca3;
+            color: #1a1a2e;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .alert a {
+            color: #1a1a2e;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <button class="return-button" onclick="window.location.href='user page.html'">Retour</button>
     <div class="container">
+        <div class="alert">
+            NB: Il faut un lien qui vient de <a href="https://www.imdb.com/" target="_blank" rel="noopener noreferrer">IMDb</a>
+        </div>
+
         <h1>Demander un film/série</h1>
         <form id="requestForm">
             <label for="title">Titre du film/série</label>
@@ -161,7 +177,6 @@
                     <p>Genre: ${movie.genre}</p>
                     <p>Durée: ${movie.duration}</p>
                     <p>Année de sortie: ${movie.releaseYear}</p>
-                    <p>IMDb: <a href="https://www.imdb.com/title/${movie.imdbId}/" target="_blank" rel="noopener noreferrer">Voir sur IMDb</a></p>
                 `;
                 moviesList.appendChild(movieItem);
             });
