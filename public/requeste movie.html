@@ -161,6 +161,7 @@
                     <p>Genre: ${movie.genre}</p>
                     <p>Durée: ${movie.duration}</p>
                     <p>Année de sortie: ${movie.releaseYear}</p>
+                    <p>IMDb: <a href="https://www.imdb.com/title/${movie.imdbId}/" target="_blank" rel="noopener noreferrer">Voir sur IMDb</a></p>
                 `;
                 moviesList.appendChild(movieItem);
             });
@@ -222,7 +223,7 @@
             requestItem.className = 'request-item';
             requestItem.innerHTML = `
                 <h3>${request.title}</h3>
-                <p>IMDB: <a href="${request.imdbLink}" target="_blank">${request.imdbLink}</a></p>
+                <p>IMDB: <a href="${request.imdbLink}" target="_blank" rel="noopener noreferrer">${request.imdbLink}</a></p>
                 ${request.comment ? `<p>Commentaire: ${request.comment}</p>` : ''}
             `;
             requestsList.insertBefore(requestItem, requestsList.firstChild);
