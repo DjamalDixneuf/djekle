@@ -24,7 +24,7 @@ app.get('/.netlify/functions/api/movies', async (req, res) => {
   console.log('GET /movies appelé');
   try {
     const db = await connectToDatabase();
-    const movies = await db.collection('movies').find({}).toArray();
+    const movies = await db.collection('movies').find({}).sort({ addedDate: -1 }).toArray();
     res.json(movies);
   } catch (error) {
     console.error('Error reading movies:', error);
@@ -36,7 +36,10 @@ app.post('/.netlify/functions/api/movies', async (req, res) => {
   console.log('POST /movies appelé');
   try {
     const db = await connectToDatabase();
-    const newMovie = req.body;
+    const newMovie = {
+      ...req.body,
+      addedDate: new Date()
+    };
     const result = await db.collection('movies').insertOne(newMovie);
     res.status(201).json({ ...newMovie, _id: result.insertedId });
   } catch (error) {
@@ -67,8 +70,6 @@ app.delete('/.netlify/functions/api/movies/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
-
-// New routes for movie requests
 
 app.get('/.netlify/functions/api/movie-requests', async (req, res) => {
   console.log('GET /movie-requests appelé');
@@ -111,14 +112,13 @@ app.post('/.netlify/functions/api/movie-requests/:id/approve', async (req, res) 
       return res.status(404).json({ error: "Demande non trouvée" });
     }
 
-    // Add the approved movie to the movies collection
     await db.collection('movies').insertOne({
       title: request.title,
       imdbLink: request.imdbLink,
-      // Add other necessary fields
+      addedDate: new Date(),
+      // Ajoutez d'autres champs nécessaires ici
     });
 
-    // Remove the request from movieRequests collection
     await db.collection('movieRequests').deleteOne({ _id: new ObjectId(id) });
 
     res.status(200).json({ message: "Demande approuvée et film ajouté avec succès" });
