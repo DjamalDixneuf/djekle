@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const newReleasesContainer = document.querySelector('#newReleases .grid');
-    const popularMoviesContainer = document.querySelector('#popularMovies .grid');
     const moviesContainer = document.getElementById('moviesContainer');
     const searchInput = document.getElementById('searchInput');
     const modal = document.getElementById('videoModal');
@@ -53,11 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log('Films reçus:', data);
             movies = Array.isArray(data) ? data : [];
-            // Trier tous les films du plus récemment ajouté au plus ancien
-            movies.sort((a, b) => new Date(b.addedDate) - new Date(a.addedDate));
             displayMovies(movies);
-            displayNewReleases(movies);
-            displayPopularMovies(movies);
         })
         .catch((error) => {
             console.error('Error:', error);
@@ -77,20 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return url;
     }
 
-    function createMovieCard(movie) {
-        const movieCard = document.createElement('div');
-        movieCard.className = 'card';
-        movieCard.innerHTML = `
-            <img src="${movie.thumbnailUrl}" alt="${movie.title}" onclick="watchMovie('${movie._id}')">
-            <div class="card-content">
-                <h3>${movie.title}</h3>
-                <p>${movie.duration}</p>
-                <p>${movie.type === 'série' ? (movie.episodes ? movie.episodes.length : '0') + ' épisodes' : 'Film'}</p>
-            </div>
-        `;
-        return movieCard;
-    }
-
     function displayMovies(moviesToShow) {
         moviesContainer.innerHTML = '';
         if (moviesToShow.length === 0) {
@@ -98,28 +78,18 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         moviesToShow.forEach(movie => {
-            moviesContainer.appendChild(createMovieCard(movie));
-        });
-    }
-
-    function displayNewReleases(allMovies) {
-        // Trier les films du plus récemment ajouté au plus ancien
-        const newReleases = allMovies.sort((a, b) => new Date(b.addedDate) - new Date(a.addedDate)).slice(0, 4);
-        newReleasesContainer.innerHTML = '';
-        newReleases.forEach(movie => {
-            newReleasesContainer.appendChild(createMovieCard(movie));
-        });
-    }
-
-    function displayPopularMovies(allMovies) {
-        // Trier les films du plus récemment ajouté au plus ancien, puis par popularité
-        const popularMovies = allMovies
-            .sort((a, b) => new Date(b.addedDate) - new Date(a.addedDate))
-            .sort((a, b) => b.popularity - a.popularity)
-            .slice(0, 4);
-        popularMoviesContainer.innerHTML = '';
-        popularMovies.forEach(movie => {
-            popularMoviesContainer.appendChild(createMovieCard(movie));
+            const movieCard = document.createElement('div');
+            movieCard.className = 'card';
+            movieCard.innerHTML = `
+                <img src="${movie.thumbnailUrl}" alt="${movie.title}">
+                <div class="card-content">
+                    <h3>${movie.title}</h3>
+                    <p>${movie.duration}</p>
+                    <p>${movie.type === 'série' ? (movie.episodes ? movie.episodes.length : '0') + ' épisodes' : 'Film'}</p>
+                    <button onclick="watchMovie('${movie._id}')">Regarder</button>
+                </div>
+            `;
+            moviesContainer.appendChild(movieCard);
         });
     }
 
@@ -171,4 +141,56 @@ document.addEventListener('DOMContentLoaded', function() {
     if (closeBtn) {
         closeBtn.onclick = function() {
             modal.style.display = 'none';
-            
+            videoPlayer.src = '';
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            videoPlayer.src = '';
+        }
+    }
+
+    function toggleDesktopMode() {
+        document.body.classList.toggle('desktop-mode');
+        if (document.body.classList.contains('desktop-mode')) {
+            toggleDesktopModeButton.textContent = 'Mode Mobile';
+        } else {
+            toggleDesktopModeButton.textContent = 'Mode Ordinateur';
+        }
+    }
+
+    function updateToggleButtonVisibility() {
+        if (window.innerWidth <= 768) {
+            toggleDesktopModeButton.style.display = 'block';
+        } else {
+            toggleDesktopModeButton.style.display = 'none';
+            document.body.classList.remove('desktop-mode');
+        }
+    }
+
+    searchInput.addEventListener('input', filterMovies);
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function() {
+            localStorage.removeItem('authToken');
+            window.location.href = 'index.html';
+        });
+    }
+
+    if (userButton) {
+        userButton.addEventListener('click', function() {
+            window.location.href = 'requeste movie.html';
+        });
+    }
+
+    if (toggleDesktopModeButton) {
+        toggleDesktopModeButton.addEventListener('click', toggleDesktopMode);
+    }
+
+    window.addEventListener('resize', updateToggleButtonVisibility);
+    updateToggleButtonVisibility();
+
+    loadMovies();
+});
